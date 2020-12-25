@@ -168,5 +168,65 @@ return null;
 		
 	}
 		return Response.status(status).entity(mainObj.toString()).build();
-	}	
+	}
+	@POST
+@Path("/createDept")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public Response createDepartment(department dept)
+{
+	MysqlConnection connection = new MysqlConnection();
+	
+	con = connection.getConnection();
+	
+try
+{
+	
+	
+	
+	
+	String query = "INSERT INTO `midterm`.`department`(`DEPT_ID`,`NAME`)"
+			+ "VALUES(?,?)";
+	
+	
+	preparedStatement = con.prepareStatement(query);
+
+	preparedStatement.setInt(1, dept.getDEPT_ID());
+	preparedStatement.setString(2, dept.getNAME());
+	
+	
+	int rowCount = preparedStatement.executeUpdate();
+	
+	if(rowCount>0)
+	{
+		System.out.println("Record inserted Successfully! : "+rowCount);
+		
+		mainObj.accumulate("Status", 201);
+		mainObj.accumulate("Message", "Record Successfully added!");
+	}else
+	{
+		mainObj.accumulate("Status", 500);
+		mainObj.accumulate("Message", "Something went wrong!");
+	}
+	
+	
+}catch (SQLException e) {
+
+	mainObj.accumulate("Status", 500);
+	mainObj.accumulate("Message", e.getMessage());
+}finally {
+	try
+	{
+		con.close();
+		preparedStatement.close();
+	}catch (SQLException e) {
+		System.out.println("Finally SQL Exception : "+e.getMessage());
+	}
+}
+
+
+return Response.status(201).entity(mainObj.toString()).build();
+
+}
+
 }
