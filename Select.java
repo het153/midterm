@@ -37,8 +37,55 @@ public class Select {
 public static void main (String a[]) {
 		
 		Select myObj = new Select();
-	    //System.out.println(myObj.deletedepartment("4").toString());
+	    
 		
 	}
+	@PUT
+	@Path("/updatedept/{DEPT_ID}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updatedepartment(@PathParam("DEPT_ID") int DEPT_ID,department dept)
+	{
+
+		MysqlConnection connection = new MysqlConnection();
+		
+		con = connection.getConnection();
+		
+		try
+		{
+			String query = "UPDATE midterm.department SET NAME= ? , STATUS = ? WHERE DEPT_ID ="+DEPT_ID;
+		
+			preparedStatement = con.prepareStatement(query);
+
+			
+				preparedStatement.setString(1, dept.getNAME());
+				
+				
+			int rowCount = preparedStatement.executeUpdate();
+			Status	status=Status.OK;
+			if(rowCount>0)
+			{
+				status=Status.OK;
+				
+				mainObj.accumulate("Status", status);
+				mainObj.accumulate("Message", "Record Successfully updated!");
+			}else
+			{
+				status = Status.NOT_MODIFIED;
+				mainObj.accumulate("Status", status);
+				mainObj.accumulate("Message", "Something went wrong!");
+			}
+			
+				
+				
+		
+		
+	}
+		catch (SQLException e) {
+		
+		e.printStackTrace();
+	}
+return null;
+}
 	
 }
