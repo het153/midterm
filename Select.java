@@ -135,5 +135,38 @@ return null;
 	return Response.noContent().entity(mainObj.toString()).build();
 
 }
-	
+@DELETE
+	@Path("/Acc/{ACCOUNT_ID}")
+	public Response deleteaccount(@PathParam("ACCOUNT_ID")String ACCOUNT_ID) {
+		MysqlConnection connection= new MysqlConnection();
+		
+		con = connection.getConnection();
+		Status status =Status.OK;
+		
+		try {
+			
+			String query ="DELETE FROM account WHERE ACCOUNT_ID="+ACCOUNT_ID;
+			
+			stmt=con.createStatement();
+			
+			int rowCount = stmt.executeUpdate(query);
+			
+			if(rowCount>0) {
+				status=Status.OK;
+				mainObj.accumulate("Status", status);
+				mainObj.accumulate("Message", " data deleted!");
+		}else {
+			status=Status.NOT_MODIFIED;
+			mainObj.accumulate("Status", status);
+			mainObj.accumulate("Message", " oops wrong!");
+		}
+	}catch(SQLException e) {
+		e.printStackTrace();
+		status=Status.NOT_MODIFIED;
+		mainObj.accumulate("Status", status);
+		mainObj.accumulate("Message", "something wrong");
+		
+	}
+		return Response.status(status).entity(mainObj.toString()).build();
+	}	
 }
