@@ -87,5 +87,53 @@ public static void main (String a[]) {
 	}
 return null;
 }
+@GET
+	@Path("/Employee/{EMP_ID}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEmployee(@PathParam("EMP_ID")String EMP_ID)
+	{
+
+		MysqlConnection connection = new MysqlConnection();
+		
+		con = connection.getConnection();
+		
+	try
+	{
+		stmt=con.createStatement();
+		String query =("select * from employee where EMP_ID="+EMP_ID);
+		rs=stmt.executeQuery(query);
+		while(rs.next())
+		{
+			//mainObj.accumulate("EMP_ID",rs.getInt("EMP_ID"));
+			mainObj.accumulate("END_DATE",rs.getDate("END_DATE"));
+			mainObj.accumulate("FIRST_NAME",rs.getString("FIRST_NAME"));
+			mainObj.accumulate("LAST_NAME",rs.getString("LAST_NAME"));
+			mainObj.accumulate("START_DATE",rs.getDate("START_DATE"));
+			mainObj.accumulate("TITLE",rs.getString("TITLE"));
+			mainObj.accumulate("ASSIGNED_BRANCH_ID",rs.getInt("ASSIGNED_BRANCH_ID"));
+			mainObj.accumulate("DEPT_ID",rs.getInt("DEPT_ID"));
+			mainObj.accumulate("SUPERIOR_EMP_ID",rs.getInt("SUPERIOR_EMP_ID"));
+			
+			
+		}
+		if(!mainObj.isEmpty())
+		{
+			return Response.ok().entity(mainObj.toString()).build();
+		}else
+		{
+			mainObj.accumulate("Status", 500);
+			mainObj.accumulate("Message", "Something went wrong!");
+		}
+		}
+		catch (SQLException e) {
+
+			mainObj.accumulate("Status", 204);
+			mainObj.accumulate("Message", e.getMessage());
+		
+			
+	}
+	return Response.noContent().entity(mainObj.toString()).build();
+
+}
 	
 }
