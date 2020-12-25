@@ -296,5 +296,49 @@ public static void main (String a[]) {
 	}
 return null;
 }
+@GET
+	@Path("/getDept")
+	@Produces(MediaType.APPLICATION_JSON)
 	
+	public Response getDepartment() {
+		
+		
+		
+		MysqlConnection connection = new MysqlConnection();
+
+		con = connection.getConnection();
+		
+		try {
+			
+			stmt = con.createStatement();
+
+			rs = stmt.executeQuery("Select * from department");
+			
+
+			while (rs.next()) {
+				childObj = new JSONObject();
+
+				childObj.accumulate("dept id", rs.getString("DEPT_ID"));
+				childObj.accumulate(" Name", rs.getString("NAME"));
+
+				jsonArray.put(childObj);
+			}
+
+			mainObj.put("Department", jsonArray);
+		} catch (SQLException e) {
+			System.out.println("SQL Exception : " + e.getMessage());
+		} finally {
+			try {
+				con.close();
+				stmt.close();
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("Finally Block SQL Exception : " + e.getMessage());
+			}
+		}
+		
+	
+
+		return Response.status(200).entity(mainObj.toString()).build();
+	}	
 }
